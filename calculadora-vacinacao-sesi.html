@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Custo por Colaborador | SESI Bahia</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2.5rem 1rem 3rem;
+      color: #1a1a2e;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      max-width: 600px;
+      width: 100%;
+      padding: 2.5rem;
+      box-shadow: 0 6px 40px rgba(24, 95, 165, 0.10);
+    }
+
+    .logo-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid #e5e9ef;
+    }
+
+
+    h1 {
+      font-size: 21px;
+      font-weight: 800;
+      color: #0c447c;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .toggle-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+    .toggle-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.75rem;
+    }
+    .tog {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #f9fafb;
+      color: #6b7280;
+      transition: all 0.15s ease;
+      text-align: center;
+      user-select: none;
+    }
+    .tog.active {
+      background: #185FA5;
+      color: #ffffff;
+      border-color: #185FA5;
+    }
+
+    .field { margin-bottom: 1.5rem; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+    .field-row { display: flex; align-items: center; gap: 14px; }
+    .field-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0c447c;
+      min-width: 92px;
+      text-align: right;
+    }
+
+    input[type=range] {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 5px;
+      background: #dbeafe;
+      border-radius: 5px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #185FA5;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 2px #185FA5;
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #185FA5;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 2px #185FA5;
+    }
+
+    .dose-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #185FA5;
+      background: #eff6ff;
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #e5e9ef;
+      margin: 1.75rem 0;
+    }
+
+    .results-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-bottom: 12px;
+    }
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .metric {
+      background: #f4f7fb;
+      border-radius: 10px;
+      padding: 14px 12px;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .metric-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+    .metric-value.danger { color: #991b1b; }
+    .metric-value.blue   { color: #185FA5; }
+
+    .bar-wrap { margin-bottom: 1.5rem; }
+    .bar-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+    .bar-top .bar-val { color: #185FA5; }
+    .bar-track {
+      height: 8px;
+      background: #dbeafe;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: #185FA5;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .insight {
+      background: #eff6ff;
+      border-left: 3px solid #185FA5;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 1.75rem;
+      line-height: 1.75;
+    }
+    .insight strong { color: #0c447c; }
+
+    .cta-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: #185FA5;
+      color: #ffffff;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .cta-btn:hover { background: #0c447c; transform: translateY(-1px); }
+    .cta-btn:active { transform: translateY(0); }
+
+    .cta-note {
+      font-size: 12px;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .footer {
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #e5e9ef;
+      font-size: 11px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.5rem; }
+      .results { grid-template-columns: 1fr 1fr; }
+      .results .metric:last-child { grid-column: span 2; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <div class="logo-bar">
+      <img src="data:image/png;base64,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" alt="SESI Saúde" style="height: 52px; width: auto;">
+    </div>
+
+    <h1>Quanto a gripe custa<br>para a sua empresa?</h1>
+    <p class="subtitle">Ajuste os dados abaixo e descubra o impacto real dos afastamentos — e o quanto você economiza vacinando sua equipe.</p>
+
+    <div class="toggle-label">Tipo de vacina</div>
+    <div class="toggle-row">
+      <div class="tog active" id="tog-tri" onclick="setVacina('tri')">Trivalente</div>
+      <div class="tog" id="tog-quad" onclick="setVacina('quad')">Quadrivalente</div>
+    </div>
+
+    <div class="field">
+      <label>Número de colaboradores</label>
+      <div class="field-row">
+        <input type="range" id="colab" min="20" max="5000" step="10" value="200">
+        <span class="field-val" id="colab-val">200</span>
+      </div>
+    </div>
+
+    <div class="dose-badge" id="dose-badge">R$ 54,30 por dose · faixa até 1.000 trabalhadores</div>
+
+    <div class="field">
+      <label>Salário médio mensal (R$)</label>
+      <div class="field-row">
+        <input type="range" id="salario" min="1500" max="10000" step="100" value="2800">
+        <span class="field-val" id="salario-val">R$ 2.800</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Taxa de afastamento por gripe <span style="font-weight:400;text-transform:none;letter-spacing:0;">(% da equipe / temporada)</span></label>
+      <div class="field-row">
+        <input type="range" id="taxa" min="5" max="30" step="1" value="15">
+        <span class="field-val" id="taxa-val">15%</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="results-title">Resultado estimado</div>
+
+    <div class="results">
+      <div class="metric">
+        <div class="metric-label">Colaboradores afastados</div>
+        <div class="metric-value danger" id="r-afastados">30</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Custo dos afastamentos</div>
+        <div class="metric-value danger" id="r-afast">R$ 15.272</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Custo da vacinação</div>
+        <div class="metric-value blue" id="r-vacina">R$ 10.860</div>
+      </div>
+    </div>
+
+    <div class="bar-wrap">
+      <div class="bar-top">
+        <span>Economia estimada com vacinação</span>
+        <span class="bar-val" id="r-economia-label">R$ 4.412</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill" style="width: 60%;"></div>
+      </div>
+    </div>
+
+    <div class="insight">
+      Vacinando sua equipe, sua empresa evita <strong id="i-dias">120 dias</strong> de trabalho perdido por temporada. O custo da vacinação representa <strong id="i-pct">71%</strong> do custo dos afastamentos — economizando <strong id="i-economia">R$ 4.412</strong>. Cada R$ 1,00 investido na vacina evita <strong id="i-roi">R$ 1,41</strong> em perdas operacionais.
+    </div>
+
+    <a href="https://vacina.sesibahia.com.br/" target="_blank" class="cta-btn">
+      Solicitar proposta para minha empresa
+    </a>
+    <p class="cta-note">Atendimento na sua empresa &middot; Sem burocracia &middot; (71) 3879-5300</p>
+
+    <div class="footer">
+      * Cálculo estimado com base em taxa média de afastamento por gripe de <span id="ft-taxa">15%</span> da equipe e 4 dias de afastamento por trabalhador. Valores por dose conforme Tabela de Valores SESI 2026. Condições: empresas industriais; atendimento em até 50 km de uma unidade SESI; mínimo de 20 pessoas por turno; horário comercial 8h–18h. Valor sujeito às regras de contratação.
+    </div>
+
+  </div>
+
+  <script>
+    const TABELA = {
+      tri:  [54.30, 53.20, 52.00, 50.80],
+      quad: [69.40, 68.00, 66.80, 65.70]
+    };
+    const FAIXAS = [
+      { max: 1000,  label: 'até 1.000 trabalhadores' },
+      { max: 2000,  label: 'entre 1.000 e 2.000' },
+      { max: 3000,  label: 'entre 2.000 e 3.000' },
+      { max: 5000,  label: 'entre 3.000 e 5.000' }
+    ];
+
+    let vacina = 'tri';
+
+    function getFaixa(n) {
+      for (let i = 0; i < FAIXAS.length; i++) {
+        if (n <= FAIXAS[i].max) return i;
+      }
+      return FAIXAS.length - 1;
+    }
+
+    function fmtR(n) { return 'R$ ' + Math.round(n).toLocaleString('pt-BR'); }
+    function fmt(n)  { return Math.round(n).toLocaleString('pt-BR'); }
+
+    function setVacina(v) {
+      vacina = v;
+      document.getElementById('tog-tri').classList.toggle('active', v === 'tri');
+      document.getElementById('tog-quad').classList.toggle('active', v === 'quad');
+      calc();
+    }
+
+    function calc() {
+      const colab   = parseInt(document.getElementById('colab').value);
+      const salario = parseInt(document.getElementById('salario').value);
+      const taxa    = parseInt(document.getElementById('taxa').value) / 100;
+
+      const faixaIdx   = getFaixa(colab);
+      const preco      = TABELA[vacina][faixaIdx];
+      const faixaLabel = FAIXAS[faixaIdx].label;
+
+      const afastados   = Math.round(colab * taxa);
+      const diaria      = salario / 22;
+      const custoAfast  = Math.round(afastados * 4 * diaria);
+      const custoVacina = Math.round(colab * preco);
+      const economia    = custoAfast - custoVacina;
+      const diasPerd    = afastados * 4;
+      const pct         = custoAfast > 0 ? Math.round((custoVacina / custoAfast) * 100) : 0;
+      const roi         = custoVacina > 0 ? (custoAfast / custoVacina) : 0;
+      const barPct      = Math.min(Math.max((economia / custoAfast) * 100, 0), 100);
+
+      document.getElementById('colab-val').textContent        = fmt(colab);
+      document.getElementById('salario-val').textContent      = 'R$ ' + fmt(salario);
+      document.getElementById('taxa-val').textContent         = Math.round(taxa * 100) + '%';
+      document.getElementById('dose-badge').textContent       = fmtR(preco) + ' por dose · faixa ' + faixaLabel;
+      document.getElementById('r-afastados').textContent      = fmt(afastados);
+      document.getElementById('r-afast').textContent          = fmtR(custoAfast);
+      document.getElementById('r-vacina').textContent         = fmtR(custoVacina);
+      document.getElementById('r-economia-label').textContent = economia > 0 ? fmtR(economia) : 'R$ 0';
+      document.getElementById('bar-fill').style.width         = barPct.toFixed(1) + '%';
+      document.getElementById('i-dias').textContent           = fmt(diasPerd) + ' dias';
+      document.getElementById('i-pct').textContent            = pct + '%';
+      document.getElementById('i-economia').textContent       = economia > 0 ? fmtR(economia) : 'R$ 0';
+      document.getElementById('i-roi').textContent            = 'R$ ' + roi.toFixed(2).replace('.', ',');
+      document.getElementById('ft-taxa').textContent          = Math.round(taxa * 100) + '%';
+    }
+
+    ['colab', 'salario', 'taxa'].forEach(id => {
+      document.getElementById(id).addEventListener('input', calc);
+    });
+
+    calc();
+  </script>
+</body>
+</html>
