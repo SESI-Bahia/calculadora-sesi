@@ -276,7 +276,7 @@
     <div class="field">
       <label>Número de colaboradores</label>
       <div class="field-row">
-        <input type="range" id="colab" min="20" max="5000" step="10" value="200">
+        <input type="range" id="colab" min="50" max="5000" step="10" value="200">
         <span class="field-val" id="colab-val">200</span>
       </div>
     </div>
@@ -286,7 +286,7 @@
     <div class="field">
       <label>Salário médio mensal (R$)</label>
       <div class="field-row">
-        <input type="range" id="salario" min="1500" max="10000" step="100" value="2800">
+        <input type="range" id="salario" min="2000" max="10000" step="100" value="2800">
         <span class="field-val" id="salario-val">R$ 2.800</span>
       </div>
     </div>
@@ -294,7 +294,7 @@
     <div class="field">
       <label>Taxa de afastamento por gripe <span style="font-weight:400;text-transform:none;letter-spacing:0;">(% da equipe / temporada)</span></label>
       <div class="field-row">
-        <input type="range" id="taxa" min="5" max="30" step="1" value="15">
+        <input type="range" id="taxa" min="10" max="30" step="1" value="15">
         <span class="field-val" id="taxa-val">15%</span>
       </div>
     </div>
@@ -338,7 +338,7 @@
     <p class="cta-note">Atendimento na sua empresa &middot; Sem burocracia &middot; (71) 3879-5300</p>
 
     <div class="footer">
-      * Cálculo estimado com base em taxa média de afastamento por gripe de <span id="ft-taxa">15%</span> da equipe e 4 dias de afastamento por trabalhador. Valores por dose conforme Tabela de Valores SESI 2026. Condições: empresas industriais; atendimento em até 50 km de uma unidade SESI; mínimo de 20 pessoas por turno; horário comercial 8h–18h. Valor sujeito às regras de contratação.
+      * Cálculo estimado com base em taxa média de afastamento por gripe de <span id="ft-taxa">15%</span> da equipe, 4 dias de afastamento por trabalhador e fator de custo indireto de 2x (horas extras, reposição, queda de produtividade e gestão do afastamento). Valores por dose conforme Tabela de Valores SESI 2026. Condições: empresas industriais; atendimento em até 50 km de uma unidade SESI; mínimo de 20 pessoas por turno; horário comercial 8h–18h. Valor sujeito às regras de contratação.
     </div>
 
   </div>
@@ -385,7 +385,7 @@
 
       const afastados   = Math.round(colab * taxa);
       const diaria      = salario / 22;
-      const custoAfast  = Math.round(afastados * 4 * diaria);
+      const custoAfast  = Math.round(afastados * 4 * diaria * 2);
       const custoVacina = Math.round(colab * preco);
       const economia    = custoAfast - custoVacina;
       const diasPerd    = afastados * 4;
